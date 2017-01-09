@@ -1,0 +1,16 @@
+<resources>
+    <string name="app_name">Auction</string>
+    <string name="action_logout">Logout</string>
+    <string name="welcome">Welcome</string>
+    <string name="enter">Enter</string>
+    <string name="hint_enter_user_name">Enter your user name</string>
+    <string name="register">Register</string>
+    <string name="not_logged">Invalid login!</string>
+    <string name="shared_preference">shared_preference</string>
+    <string name="text_sample">Sample sample sample</string>
+    <string name="string_bid">Bid</string>
+    <string name="no_bid">No bid yet</string>
+    <string name="done">Done</string>
+    <string name="live">Live</string>
+    <string name="winner">We have a winner</string>
+</resources>
