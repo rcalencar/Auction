@@ -18,20 +18,22 @@ import java.util.concurrent.LinkedBlockingQueue;
  * Created by rodrigo on 1/6/17.
  */
 
-public class AuctionCoordinator {
+public class AuctionReactor {
     private static final String LOG_TAG = "Auction";
+    public static Thread runnigThread;
     private Context context;
     private BidRequestConsumer processingConsumer;
     private LinkedBlockingQueue<Request> requests = new LinkedBlockingQueue<>();
 
-    private AuctionCoordinator(Context context) {
+    private AuctionReactor(Context context) {
         this.context = context;
     }
 
-    public static AuctionCoordinator build(Context context) {
-        AuctionCoordinator instance = new AuctionCoordinator(context);
+    public static AuctionReactor build(Context context) {
+        AuctionReactor instance = new AuctionReactor(context);
         instance.processingConsumer = new BidRequestConsumer(instance, instance.requests);
-        new Thread(instance.processingConsumer).start();
+        runnigThread = new Thread(instance.processingConsumer);
+        runnigThread.start();
         return instance;
     }
 
@@ -95,7 +97,7 @@ public class AuctionCoordinator {
         }
     }
 
-    public void run() {
+    public void start() {
         final Handler handler = new Handler();
         Timer timer = new Timer();
         TimerTask doAsynchronousTask = new TimerTask() {
@@ -104,7 +106,7 @@ public class AuctionCoordinator {
                 handler.post(new Runnable() {
                     @SuppressWarnings("unchecked")
                     public void run() {
-                        addRequest(new AuctionCoordinator.BidBeats());
+                        addRequest(new AuctionReactor.BidBeats());
                     }
                 });
             }
@@ -117,12 +119,12 @@ public class AuctionCoordinator {
     }
 
     private static class BidRequestConsumer implements Runnable {
-        private final AuctionCoordinator auctionCoordinator;
+        private final AuctionReactor auctionReactor;
         private LinkedBlockingQueue<Request> queue;
         private boolean isRunning = true;
 
-        BidRequestConsumer(AuctionCoordinator auctionCoordinator, LinkedBlockingQueue<Request> queue) {
-            this.auctionCoordinator = auctionCoordinator;
+        BidRequestConsumer(AuctionReactor auctionReactor, LinkedBlockingQueue<Request> queue) {
+            this.auctionReactor = auctionReactor;
             this.queue = queue;
         }
 
@@ -131,7 +133,7 @@ public class AuctionCoordinator {
             while (isRunning) {
                 try {
                     Request bidRequest = queue.take();
-                    auctionCoordinator.process(bidRequest);
+                    auctionReactor.process(bidRequest);
                 } catch (InterruptedException e) {
                     e.printStackTrace();
                 }

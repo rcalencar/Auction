@@ -14,7 +14,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
-import com.example.rodrigo.auction.model.AuctionCoordinator;
+import com.example.rodrigo.auction.model.AuctionReactor;
 import com.example.rodrigo.auction.repository.database.AuctionProvider;
 import com.example.rodrigo.auction.repository.local.LocalLogin;
 
@@ -30,7 +30,7 @@ public class MainActivityFragment extends Fragment implements LoaderManager.Load
     private LinearLayoutManager mLayoutManager;
     private AuctionAdapter mAdapter;
 
-    private AuctionCoordinator auctionCoordinator;
+    private AuctionReactor auctionReactor;
     private BidBot bidBot;
 
     public MainActivityFragment() {
@@ -45,18 +45,18 @@ public class MainActivityFragment extends Fragment implements LoaderManager.Load
 
         mAdapter = new AuctionAdapter(getContext(), this);
 
-        auctionCoordinator = AuctionCoordinator.build(getContext());
+        auctionReactor = AuctionReactor.build(getContext());
 
-        bidBot = new BidBot(getContext(), new Handler(), auctionCoordinator);
+        bidBot = new BidBot(getContext(), new Handler(), auctionReactor);
         getContext().getContentResolver().registerContentObserver(AuctionProvider.Auctions.CONTENT_URI, true, bidBot);
 
-        auctionCoordinator.run();
+        auctionReactor.start();
     }
 
     @Override
     public void onStop() {
         getContext().getContentResolver().unregisterContentObserver(bidBot);
-        auctionCoordinator.stop();
+        auctionReactor.stop();
         super.onStop();
     }
 
@@ -117,6 +117,6 @@ public class MainActivityFragment extends Fragment implements LoaderManager.Load
 
     @Override
     public void onItemSelected(Long auctionId, Long value) {
-        auctionCoordinator.addRequest(new AuctionCoordinator.BidRequest(auctionId, LocalLogin.loginId(getContext()), value));
+        auctionReactor.addRequest(new AuctionReactor.BidRequest(auctionId, LocalLogin.loginId(getContext()), value));
     }
 }

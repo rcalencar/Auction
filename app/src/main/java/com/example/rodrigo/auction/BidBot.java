@@ -8,7 +8,7 @@ import android.os.Handler;
 import android.util.Log;
 
 import com.example.rodrigo.auction.model.Auction;
-import com.example.rodrigo.auction.model.AuctionCoordinator;
+import com.example.rodrigo.auction.model.AuctionReactor;
 import com.example.rodrigo.auction.model.Bid;
 import com.example.rodrigo.auction.model.User;
 import com.example.rodrigo.auction.repository.database.dao.AuctionDAO;
@@ -30,12 +30,12 @@ class BidBot extends ContentObserver {
     private static final String LOG_TAG = "Auction";
     private final Context context;
     private User user;
-    private AuctionCoordinator auctionCoordinator;
+    private AuctionReactor auctionReactor;
 
-    public BidBot(Context context, Handler handler, AuctionCoordinator auctionCoordinator) {
+    public BidBot(Context context, Handler handler, AuctionReactor auctionReactor) {
         super(handler);
         this.context = context;
-        this.auctionCoordinator = auctionCoordinator;
+        this.auctionReactor = auctionReactor;
     }
 
     @Override
@@ -71,7 +71,7 @@ class BidBot extends ContentObserver {
                     public void run() {
                         handler.post(new Runnable() {
                             public void run() {
-                                auctionCoordinator.addRequest(new AuctionCoordinator.BidRequest(auction.id, user.id, auction.nextBid()));
+                                auctionReactor.addRequest(new AuctionReactor.BidRequest(auction.id, user.id, auction.nextBid()));
                             }
                         });
                     }
