@@ -25,12 +25,12 @@ public class AuctionDAO {
     }
 
     public static Cursor selectLiveAuction(Context context) {
-        return context.getContentResolver().query(AuctionProvider.Auctions.CONTENT_URI, AuctionAdapter.PROJECTION, "auction_done != 1", null, null);
+        return context.getContentResolver().query(AuctionProvider.Auctions.CONTENT_URI, AuctionAdapter.PROJECTION, AuctionColumns.DONE + " != 1", null, null);
     }
 
     public static void updateAuction(Context context, Auction auction) {
         ContentValues auctionValues = Orm.build().toContentValues(auction);
-        context.getContentResolver().update(AuctionProvider.Auctions.CONTENT_URI, auctionValues, AuctionColumns.ID + " = ?", new String[]{String.valueOf(auction.id)});
-        context.getContentResolver().notifyChange(AuctionProvider.Auctions.withId(auction.id), null);
+        context.getContentResolver().update(AuctionProvider.Auctions.CONTENT_URI, auctionValues, AuctionColumns.ID + " = ?", new String[]{String.valueOf(auction.getId())});
+        context.getContentResolver().notifyChange(AuctionProvider.Auctions.withId(auction.getId()), null);
     }
 }

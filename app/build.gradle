@@ -30,6 +30,14 @@ dependencies {
     compile 'net.simonvt.schematic:schematic:0.7.0'
     compile 'org.chalup.microorm:microorm:0.7.0'
     compile 'com.android.support.constraint:constraint-layout:1.0.0-beta4'
+
+    compile 'io.reactivex:rxandroid:1.2.1'
+    compile 'io.reactivex:rxjava:1.1.6'
+    compile 'com.jakewharton.rxbinding:rxbinding:1.0.0'
+    compile ('com.trello:rxlifecycle:1.0') { exclude group: 'com.google.code.findbugs', module: 'jsr305' }
+    compile ('com.trello:rxlifecycle-components:1.0') { exclude group: 'com.google.code.findbugs', module: 'jsr305' }
+    compile 'com.venmo.cursor:library:0.4'
+
     testCompile 'junit:junit:4.12'
     testCompile 'org.powermock:powermock-api-mockito:1.6.1'
     testCompile 'org.powermock:powermock-module-junit4-rule-agent:1.6.1'

@@ -1,7 +1,6 @@
 package com.example.rodrigo.auction.model;
 
 import com.example.rodrigo.auction.repository.database.BidColumns;
-import com.example.rodrigo.auction.repository.database.UserColumns;
 
 import org.chalup.microorm.annotations.Column;
 
@@ -11,24 +10,56 @@ import org.chalup.microorm.annotations.Column;
 
 public class Bid {
     @Column(BidColumns.ID)
-    public long id;
+    private long id;
 
     @Column(BidColumns.BIDDER_ID)
-    public User bidder;
+    private User bidder;
 
     @Column(BidColumns.AUCTION_ID)
-    public Auction auction;
+    private Auction auction;
 
     @Column(BidColumns.VALUE)
-    public long value;
+    private long value;
 
     @Override
     public String toString() {
         return "Bid{" +
                 "id=" + id +
-                ", bidder=" + bidder.userName +
-                ", auction=" + (auction == null ? "null" : auction.title) +
+                ", bidder=" + bidder.getUserName() +
+                ", auction=" + (auction == null ? "null" : auction.getTitle()) +
                 ", value=" + value +
                 '}';
+    }
+
+    public long getId() {
+        return id;
+    }
+
+    public void setId(long id) {
+        this.id = id;
+    }
+
+    public User getBidder() {
+        return bidder;
+    }
+
+    public void setBidder(User bidder) {
+        this.bidder = bidder;
+    }
+
+    public Auction getAuction() {
+        return auction;
+    }
+
+    public void setAuction(Auction auction) {
+        this.auction = auction;
+    }
+
+    public long getValue() {
+        return value;
+    }
+
+    public void setValue(long value) {
+        this.value = value;
     }
 }

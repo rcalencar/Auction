@@ -20,10 +20,10 @@ import java.util.concurrent.LinkedBlockingQueue;
 
 public class AuctionReactor {
     private static final String LOG_TAG = "Auction";
-    public static Thread runnigThread;
     private Context context;
     private BidRequestConsumer processingConsumer;
     private LinkedBlockingQueue<Request> requests = new LinkedBlockingQueue<>();
+    private Thread runnigThread;
 
     private AuctionReactor(Context context) {
         this.context = context;
@@ -32,9 +32,13 @@ public class AuctionReactor {
     public static AuctionReactor build(Context context) {
         AuctionReactor instance = new AuctionReactor(context);
         instance.processingConsumer = new BidRequestConsumer(instance, instance.requests);
-        runnigThread = new Thread(instance.processingConsumer);
-        runnigThread.start();
+        instance.runnigThread = new Thread(instance.processingConsumer);
+        instance.runnigThread.start();
         return instance;
+    }
+
+    public Thread getRunningThread() {
+        return runnigThread;
     }
 
     public void stop() {
@@ -133,7 +137,7 @@ public class AuctionReactor {
             while (isRunning) {
                 try {
                     Request bidRequest = queue.take();
-                    if (bidRequest instanceof NoMoreRequests) {
+                    if (bidRequest instanceof LastRequests) {
                         break;
                     }
                     auctionReactor.process(bidRequest);
@@ -145,9 +149,9 @@ public class AuctionReactor {
     }
 
     public static class BidRequest implements Request {
-        Long auctionId;
-        Long userId;
-        Long value;
+        private Long auctionId;
+        private Long userId;
+        private Long value;
 
         public BidRequest(Long auctionId, Long userId, Long value) {
             this.auctionId = auctionId;
@@ -156,9 +160,9 @@ public class AuctionReactor {
         }
     }
 
-    public static class BidBeats implements Request {
+    private static class BidBeats implements Request {
     }
 
-    public static class NoMoreRequests implements Request {
+    public static class LastRequests implements Request {
     }
 }

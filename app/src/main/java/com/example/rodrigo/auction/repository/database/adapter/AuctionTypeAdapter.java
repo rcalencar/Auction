@@ -15,12 +15,12 @@ public class AuctionTypeAdapter implements TypeAdapter<Auction> {
     @Override
     public Auction fromCursor(Cursor c, String columnName) {
         Auction auction = new Auction();
-        auction.id = c.getLong(c.getColumnIndexOrThrow(columnName));
+        auction.setId(c.getLong(c.getColumnIndexOrThrow(columnName)));
         return auction;
     }
 
     @Override
     public void toContentValues(ContentValues values, String columnName, Auction auction) {
-        values.put(columnName, auction.id);
+        values.put(columnName, auction.getId());
     }
 }

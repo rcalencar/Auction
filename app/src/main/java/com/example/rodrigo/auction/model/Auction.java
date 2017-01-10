@@ -8,9 +8,6 @@ import net.simonvt.schematic.annotation.DefaultValue;
 
 import org.chalup.microorm.annotations.Column;
 
-import java.util.ArrayList;
-import java.util.List;
-
 /**
  * Created by rodrigo on 1/6/17.
  */
@@ -18,42 +15,42 @@ import java.util.List;
 public class Auction {
     private static final String LOG_TAG = "Auction";
     @Column(AuctionColumns.ID)
-    public long id;
+    private long id;
 
     @Column(AuctionColumns.OWNER_ID)
-    public User owner;
+    private User owner;
 
     @Column(AuctionColumns.TITLE)
-    public String title;
+    private String title;
 
     @Column(AuctionColumns.DESCRIPTION)
-    public String description;
+    private String description;
 
     @Column(AuctionColumns.INITIAL_PRICE)
-    public long initialPrice;
+    private long initialPrice;
 
     @Column(AuctionColumns.BID_INTERVAL)
-    public long bidInterval;
+    private long bidInterval;
 
     @Column(AuctionColumns.WINNER_BID_ID)
-    public Bid winnerBid;
+    private Bid winnerBid;
 
     @Column(AuctionColumns.PHOTO)
-    public String photo;
+    private String photo;
 
     @Column(AuctionColumns.DONE)
     @DefaultValue("0")
-    public boolean done;
+    private boolean done;
 
     @Column(AuctionColumns.SUCCESS)
     @DefaultValue("0")
-    public boolean success;
+    private boolean success;
 
     @Column(AuctionColumns.START_DATE)
-    public long startDate;
+    private long startDate;
 
     @Column(AuctionColumns.END_DATE)
-    public long endDate;
+    private long endDate;
 
     public Auction() {
     }
@@ -77,9 +74,9 @@ public class Auction {
         if (!done && isStillOpen() && validBid(value)) {
             Log.d(LOG_TAG, "createUserBid " + bidder + " value: " + value);
             Bid bid = new Bid();
-            bid.auction = this;
-            bid.bidder = bidder;
-            bid.value = value;
+            bid.setAuction(this);
+            bid.setBidder(bidder);
+            bid.setValue(value);
 
             winnerBid = bid;
 
@@ -92,8 +89,8 @@ public class Auction {
     }
 
     public long currentValue() {
-        if (winnerBid != null && winnerBid.value != 0) {
-            return winnerBid.value;
+        if (winnerBid != null && winnerBid.getValue() != 0) {
+            return winnerBid.getValue();
         } else {
             return initialPrice;
         }
@@ -105,14 +102,14 @@ public class Auction {
 
     public boolean finalizeIf() {
         if (!isStillOpen()) {
-            success = winnerBid != null && winnerBid.id != 0;
+            success = winnerBid != null && winnerBid.getId() != 0;
             done = true;
         }
         return done;
     }
 
     public boolean validBid(long value) {
-        return value > initialPrice && (winnerBid == null || value > winnerBid.value);
+        return value > initialPrice && (winnerBid == null || value > winnerBid.getValue());
     }
 
     public boolean isStillOpen() {
@@ -123,7 +120,7 @@ public class Auction {
     public String toString() {
         return "Auction{" +
                 "id=" + id +
-                ", owner=" + owner.userName +
+                ", owner=" + owner.getUserName() +
                 ", title='" + title + '\'' +
                 ", description='" + description + '\'' +
                 ", initialPrice=" + initialPrice +
@@ -135,5 +132,101 @@ public class Auction {
                 ", startDate=" + startDate +
                 ", endDate=" + endDate +
                 '}';
+    }
+
+    public long getId() {
+        return id;
+    }
+
+    public void setId(long id) {
+        this.id = id;
+    }
+
+    public User getOwner() {
+        return owner;
+    }
+
+    public void setOwner(User owner) {
+        this.owner = owner;
+    }
+
+    public String getTitle() {
+        return title;
+    }
+
+    public void setTitle(String title) {
+        this.title = title;
+    }
+
+    public String getDescription() {
+        return description;
+    }
+
+    public void setDescription(String description) {
+        this.description = description;
+    }
+
+    public long getInitialPrice() {
+        return initialPrice;
+    }
+
+    public void setInitialPrice(long initialPrice) {
+        this.initialPrice = initialPrice;
+    }
+
+    public long getBidInterval() {
+        return bidInterval;
+    }
+
+    public void setBidInterval(long bidInterval) {
+        this.bidInterval = bidInterval;
+    }
+
+    public Bid getWinnerBid() {
+        return winnerBid;
+    }
+
+    public void setWinnerBid(Bid winnerBid) {
+        this.winnerBid = winnerBid;
+    }
+
+    public String getPhoto() {
+        return photo;
+    }
+
+    public void setPhoto(String photo) {
+        this.photo = photo;
+    }
+
+    public boolean isDone() {
+        return done;
+    }
+
+    public void setDone(boolean done) {
+        this.done = done;
+    }
+
+    public boolean isSuccess() {
+        return success;
+    }
+
+    public void setSuccess(boolean success) {
+        this.success = success;
+    }
+
+    public long getStartDate() {
+        return startDate;
+    }
+
+    public void setStartDate(long startDate) {
+        this.startDate = startDate;
+    }
+
+    public long getEndDate() {
+        return endDate;
+    }
+
+    public void setEndDate(long endDate) {
+        this.endDate = endDate;
     }
 }

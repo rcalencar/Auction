@@ -58,8 +58,8 @@ class BidBot extends ContentObserver {
             user = UserDAO.selectUser(context, BOT_NAME);
         }
         final Auction auction = AuctionDAO.selectAuction(context, id);
-        final Bid winnerBid = BidDAO.selectBid(context, auction.winnerBid.id);
-        if (winnerBid != null && winnerBid.bidder != null && winnerBid.bidder.id != user.id) {
+        final Bid winnerBid = BidDAO.selectBid(context, auction.getWinnerBid().getId());
+        if (winnerBid != null && winnerBid.getBidder() != null && winnerBid.getBidder().getId() != user.getId()) {
             final Random r = new Random();
             int chance = r.nextInt(CHANGE_INTERVAL);
             if (chance > USER_CHANCE) {
@@ -71,13 +71,13 @@ class BidBot extends ContentObserver {
                     public void run() {
                         handler.post(new Runnable() {
                             public void run() {
-                                auctionReactor.addRequest(new AuctionReactor.BidRequest(auction.id, user.id, auction.nextBid()));
+                                auctionReactor.addRequest(new AuctionReactor.BidRequest(auction.getId(), user.getId(), auction.nextBid()));
                             }
                         });
                     }
                 };
-                int t = 2 * 1000;
-                timer.schedule(doAsynchronousTask, t);
+                int delayToBid = 2 * 1000;
+                timer.schedule(doAsynchronousTask, delayToBid);
 
             } else {
                 Log.d(LOG_TAG, "Bot is NOT going to bid.");

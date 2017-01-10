@@ -13,10 +13,10 @@ import java.util.List;
 
 public class User {
     @Column(UserColumns.ID)
-    public long id;
+    private long id;
 
     @Column(UserColumns.NAME)
-    public String userName;
+    private String userName;
 
     public User() {
     }
@@ -32,5 +32,21 @@ public class User {
                 "id=" + id +
                 ", userName='" + userName + '\'' +
                 '}';
+    }
+
+    public long getId() {
+        return id;
+    }
+
+    public void setId(long id) {
+        this.id = id;
+    }
+
+    public String getUserName() {
+        return userName;
+    }
+
+    public void setUserName(String userName) {
+        this.userName = userName;
     }
 }

@@ -69,7 +69,7 @@ public class AuctionUnitTest {
         long v1 = auction.nextBid();
         Bid b1 = auction.createUserBid(bidder, v1);
 
-        assertTrue(auction.done);
+        assertTrue(auction.isDone());
         assertNull(b1);
     }
 }

@@ -51,17 +51,17 @@ public final class AuctionDatabase {
         long t = date.getTimeInMillis();
 
         Object[] one_minute = new Object[]{(Long) t, (Long) (t + (1 * ONE_MINUTE_IN_MILLIS))};
-        Object[] two_minute = new Object[]{(Long) t, (Long) (t + (5 * ONE_MINUTE_IN_MILLIS))};
+        Object[] five_minutes = new Object[]{(Long) t, (Long) (t + (5 * ONE_MINUTE_IN_MILLIS))};
         Object[] invalid_auction = new Object[]{(Long) t, (Long) t};
 
         db.execSQL("insert into auctions(auction_ownerId, auction_title, auction_description, auction_initialPrice, auction_bidInterval, auction_startDate, auction_endDate, auction_done, auction_success) " +
-                " values(1, 'mug', 'mug mug mug', 1000, 100, :1, :2, 0, 0)", one_minute);
+                " values(1, 'Mug', 'BUZZ ALDRIN * APOLLO 11 CAPSULE MUG ''Good Luck! Moon Dust Express!'' NASA 1969', 10000000, 100000, :1, :2, 0, 0)", one_minute);
 
         db.execSQL("insert into auctions(auction_ownerId, auction_title, auction_description, auction_initialPrice, auction_bidInterval, auction_startDate, auction_endDate, auction_done, auction_success) " +
-                " values(1, 'fork', 'silver fork', 1500, 150, :1, :2, 0, 0)", two_minute);
+                " values(1, 'Fork', 'S Kirk & Son Gold Vermeil Seafood Cocktail Fork Old Maryland Floral 9 Piece 5.5\"', 150000, 15000, :1, :2, 0, 0)", five_minutes);
 
         db.execSQL("insert into auctions(auction_ownerId, auction_title, auction_description, auction_initialPrice, auction_bidInterval, auction_startDate, auction_endDate, auction_done, auction_success) " +
-                " values(1, 'spon', 'golden spon', 10000, 1000, :1, :2, 0, 0)", invalid_auction);
+                " values(1, 'Spon', 'Lousiana Purchase Expo 1803-1903 Sterling Souvenir Spon', 50000, 5000, :1, :2, 0, 0)", invalid_auction);
     }
 
     @OnUpgrade

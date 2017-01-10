@@ -15,19 +15,22 @@ import org.chalup.microorm.TypeAdapter;
  */
 
 public class BidTypeAdapter implements TypeAdapter<Bid> {
+
+    public static final int INVALID_COLUMN = -1;
+
     @Override
     public Bid fromCursor(Cursor c, String columnName) {
         Bid bid = new Bid();
-        bid.id = c.getLong(c.getColumnIndexOrThrow(columnName));
+        bid.setId(c.getLong(c.getColumnIndexOrThrow(columnName)));
 
-        if (c.getColumnIndex(BidColumns.VALUE) != -1) {
-            bid.value = c.getLong(c.getColumnIndex(BidColumns.VALUE));
+        if (c.getColumnIndex(BidColumns.VALUE) != INVALID_COLUMN) {
+            bid.setValue(c.getLong(c.getColumnIndex(BidColumns.VALUE)));
         }
-        if (c.getColumnIndex(UserColumns.NAME) != -1) {
-            if (bid.bidder == null) {
-                bid.bidder = new User();
+        if (c.getColumnIndex(UserColumns.NAME) != INVALID_COLUMN) {
+            if (bid.getBidder() == null) {
+                bid.setBidder(new User());
             }
-            bid.bidder.userName = c.getString(c.getColumnIndex(UserColumns.NAME));
+            bid.getBidder().setUserName(c.getString(c.getColumnIndex(UserColumns.NAME)));
         }
 
         return bid;
@@ -35,6 +38,6 @@ public class BidTypeAdapter implements TypeAdapter<Bid> {
 
     @Override
     public void toContentValues(ContentValues values, String columnName, Bid bid) {
-        values.put(columnName, bid.id);
+        values.put(columnName, bid.getId());
     }
 }

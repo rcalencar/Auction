@@ -19,7 +19,7 @@ import com.example.rodrigo.auction.repository.database.UserColumns;
 import java.text.DecimalFormat;
 
 public class AuctionAdapter extends RecyclerView.Adapter<AuctionAdapter.ViewHolder> {
-    private final Context context;
+    private Context context;
     private Cursor cursor;
     private OnItemSelectedListener onItemSelectedListener;
 
@@ -77,22 +77,22 @@ public class AuctionAdapter extends RecyclerView.Adapter<AuctionAdapter.ViewHold
     public void onBindViewHolder(final ViewHolder holder, int position) {
         final Cursor cursor = this.getItem(position);
         Auction auction = Orm.build().fromCursor(cursor, Auction.class);
-        holder.auctionId = auction.id;
-        holder.text_view_title.setText(auction.title);
-        holder.text_view_description.setText(auction.description);
-        if (auction.done) {
+        holder.auctionId = auction.getId();
+        holder.text_view_title.setText(auction.getTitle());
+        holder.text_view_description.setText(auction.getDescription());
+        if (auction.isDone()) {
             holder.text_view_done.setText(R.string.done);
         } else {
             holder.text_view_done.setText(R.string.live);
         }
-        if (auction.success) {
+        if (auction.isSuccess()) {
             holder.text_view_success.setVisibility(View.VISIBLE);
             holder.text_view_success.setText(R.string.winner);
         } else {
             holder.text_view_success.setVisibility(View.GONE);
         }
-        if (auction.winnerBid != null && auction.winnerBid.bidder != null && auction.winnerBid.bidder.userName != null) {
-            holder.text_view_bidder.setText(auction.winnerBid.bidder.userName);
+        if (auction.getWinnerBid() != null && auction.getWinnerBid().getBidder() != null && auction.getWinnerBid().getBidder().getUserName() != null) {
+            holder.text_view_bidder.setText(auction.getWinnerBid().getBidder().getUserName());
         } else {
             holder.text_view_bidder.setText(context.getString(R.string.no_bid));
         }
@@ -102,18 +102,18 @@ public class AuctionAdapter extends RecyclerView.Adapter<AuctionAdapter.ViewHold
         holder.button_bid.setText(String.format("%s %s", context.getString(R.string.string_bid), df.format(auction.nextBid() / 100.0)));
     }
 
-    public class ViewHolder extends RecyclerView.ViewHolder {
-        public Long auctionId;
-        public long bidValue;
-        public TextView text_view_title;
-        public TextView text_view_description;
-        public TextView text_view_current_value;
-        public TextView text_view_bidder;
-        public Button button_bid;
-        public TextView text_view_done;
-        public TextView text_view_success;
+    class ViewHolder extends RecyclerView.ViewHolder {
+        Long auctionId;
+        long bidValue;
+        TextView text_view_title;
+        TextView text_view_description;
+        TextView text_view_current_value;
+        TextView text_view_bidder;
+        Button button_bid;
+        TextView text_view_done;
+        TextView text_view_success;
 
-        public ViewHolder(View v) {
+        ViewHolder(View v) {
             super(v);
             text_view_title = (TextView) v.findViewById(R.id.text_view_title);
             text_view_description = (TextView) v.findViewById(R.id.text_view_description);

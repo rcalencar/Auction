@@ -13,9 +13,9 @@ public interface UserColumns {
     @DataType(INTEGER)
     @PrimaryKey
     @AutoIncrement
-    public String ID = "_id";
+    String ID = "_id";
 
     @DataType(TEXT)
     @NotNull
-    public String NAME = "user_userName";
+    String NAME = "user_userName";
 }

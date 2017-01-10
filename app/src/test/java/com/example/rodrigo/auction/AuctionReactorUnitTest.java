@@ -35,7 +35,7 @@ import static org.powermock.api.mockito.PowerMockito.whenNew;
  * Created by rodrigo on 1/9/2017.
  */
 @RunWith(PowerMockRunner.class)
-@PrepareForTest({AuctionReactor.class, Log.class, Auction.class, AuctionDAO.class, BidDAO.class, UserDAO.class})
+@PrepareForTest({Log.class, AuctionDAO.class, BidDAO.class, UserDAO.class})
 public class AuctionReactorUnitTest {
 
     @Test
@@ -51,16 +51,13 @@ public class AuctionReactorUnitTest {
             }
         });
         whenNew(Handler.class).withNoArguments().thenReturn(handler);
-        PowerMockito.spy(AuctionDAO.class);
         PowerMockito.mockStatic(AuctionDAO.class);
-        PowerMockito.spy(UserDAO.class);
         PowerMockito.mockStatic(UserDAO.class);
-        PowerMockito.spy(BidDAO.class);
         PowerMockito.mockStatic(BidDAO.class);
 
         MockContext context = new MockContext();
         User owner = new User(1, "owner");
-        User bidder = new User(1, "rodrigo");
+        User bidder = new User(2, "rodrigo");
         long start = Calendar.getInstance().getTimeInMillis();
         long end = start + (60 * 1000);
         Auction auction = new Auction(1, owner, "spon", "golden spon", 100000, 10000, null, null, false, false, start, end);
@@ -70,9 +67,9 @@ public class AuctionReactorUnitTest {
 
         AuctionReactor auctionReactor = AuctionReactor.build(context);
         long value = auction.nextBid();
-        auctionReactor.addRequest(new AuctionReactor.BidRequest(1l, 1l, value));
-        auctionReactor.addRequest(new AuctionReactor.NoMoreRequests());
-        AuctionReactor.runnigThread.join();
-        assertEquals(value, auction.winnerBid.value);
+        auctionReactor.addRequest(new AuctionReactor.BidRequest(1l, 2l, value));
+        auctionReactor.addRequest(new AuctionReactor.LastRequests());
+        auctionReactor.getRunningThread().join();
+        assertEquals(value, auction.getWinnerBid().getValue());
     }
 }

@@ -21,7 +21,7 @@ public class BidDAO {
         ContentValues bidValues = Orm.build().toContentValues(bid);
         bidValues.remove(BidColumns.ID);
         Uri uri = context.getContentResolver().insert(AuctionProvider.Bids.CONTENT_URI, bidValues);
-        bid.id = ContentUris.parseId(uri);
+        bid.setId(ContentUris.parseId(uri));
         context.getContentResolver().notifyChange(uri, null);
     }
 

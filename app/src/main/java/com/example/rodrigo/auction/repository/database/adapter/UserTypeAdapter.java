@@ -15,12 +15,12 @@ public class UserTypeAdapter implements TypeAdapter<User> {
     @Override
     public User fromCursor(Cursor c, String columnName) {
         User user = new User();
-        user.id = c.getLong(c.getColumnIndexOrThrow(columnName));
+        user.setId(c.getLong(c.getColumnIndexOrThrow(columnName)));
         return user;
     }
 
     @Override
     public void toContentValues(ContentValues values, String columnName, User user) {
-        values.put(columnName, user.id);
+        values.put(columnName, user.getId());
     }
 }
