@@ -1,20 +1,13 @@
 package com.example.rodrigo.auction;
 
-import android.os.Handler;
-import android.os.Message;
-import android.test.mock.MockContext;
 import android.util.Log;
 
 import com.example.rodrigo.auction.model.Auction;
-import com.example.rodrigo.auction.model.AuctionReactor;
 import com.example.rodrigo.auction.model.Bid;
 import com.example.rodrigo.auction.model.User;
-import com.example.rodrigo.auction.repository.local.LocalLogin;
 
 import org.junit.Test;
 import org.junit.runner.RunWith;
-import org.mockito.invocation.InvocationOnMock;
-import org.mockito.stubbing.Answer;
 import org.powermock.api.mockito.PowerMockito;
 import org.powermock.core.classloader.annotations.PrepareForTest;
 import org.powermock.modules.junit4.PowerMockRunner;
@@ -24,11 +17,6 @@ import java.util.Calendar;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
-import static org.mockito.Matchers.any;
-import static org.mockito.Matchers.anyLong;
-import static org.powermock.api.mockito.PowerMockito.mock;
-import static org.powermock.api.mockito.PowerMockito.when;
-import static org.powermock.api.mockito.PowerMockito.whenNew;
 
 /**
  * Example local unit test, which will execute on the development machine (host).
@@ -83,30 +71,5 @@ public class AuctionUnitTest {
 
         assertTrue(auction.done);
         assertNull(b1);
-    }
-
-    @Test
-    @PrepareForTest({AuctionReactor.class, Log.class, Auction.class})
-    public void reactor() throws Exception {
-        PowerMockito.mockStatic(Log.class);
-        final Handler handler = mock(Handler.class);
-        when(handler.post(any(Runnable.class))).thenAnswer(new Answer() {
-            @Override
-            public Object answer(InvocationOnMock invocation) throws Throwable {
-                Runnable runnable = invocation.getArgumentAt(0, Runnable.class);
-                runnable.run();
-                return null;
-            }
-        });
-        whenNew(Handler.class).withNoArguments().thenReturn(handler);
-
-        MockContext context = new MockContext();
-        AuctionReactor auctionReactor = AuctionReactor.build(context);
-        auctionReactor.start();
-
-        auctionReactor.addRequest(new AuctionReactor.BidRequest(1l, 1l, 1000l));
-
-//        auctionReactor.stop();
-        auctionReactor.runnigThread.join();
     }
 }

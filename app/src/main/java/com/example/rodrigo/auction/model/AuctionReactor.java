@@ -133,6 +133,9 @@ public class AuctionReactor {
             while (isRunning) {
                 try {
                     Request bidRequest = queue.take();
+                    if (bidRequest instanceof NoMoreRequests) {
+                        break;
+                    }
                     auctionReactor.process(bidRequest);
                 } catch (InterruptedException e) {
                     e.printStackTrace();
@@ -154,5 +157,8 @@ public class AuctionReactor {
     }
 
     public static class BidBeats implements Request {
+    }
+
+    public static class NoMoreRequests implements Request {
     }
 }
