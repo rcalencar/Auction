@@ -100,7 +100,7 @@ public class Auction {
         return currentValue() + bidInterval;
     }
 
-    public boolean finalizeIf() {
+    public boolean finalizeIfExpired() {
         if (!isStillOpen()) {
             success = winnerBid != null && winnerBid.getId() != 0;
             done = true;

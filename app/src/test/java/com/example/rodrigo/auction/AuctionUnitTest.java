@@ -37,7 +37,7 @@ public class AuctionUnitTest {
         Auction auction = new Auction(1, owner, "spon", "golden spon", 100000, 10000, null, null, false, false, start, end);
 
         long v1 = auction.nextBid();
-        Bid b1 = auction.createUserBid(bidder, v1);
+        auction.createUserBid(bidder, v1);
 
         assertEquals(auction.currentValue(), v1);
     }
@@ -65,7 +65,7 @@ public class AuctionUnitTest {
 
         long start = Calendar.getInstance().getTimeInMillis();
         Auction auction = new Auction(1, owner, "spon", "golden spon", 100000, 10000, null, null, false, false, start, start);
-        auction.finalizeIf();
+        auction.finalizeIfExpired();
         long v1 = auction.nextBid();
         Bid b1 = auction.createUserBid(bidder, v1);
 

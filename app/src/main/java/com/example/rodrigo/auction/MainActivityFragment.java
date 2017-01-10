@@ -16,7 +16,7 @@ import android.view.ViewGroup;
 
 import com.example.rodrigo.auction.model.AuctionReactor;
 import com.example.rodrigo.auction.repository.database.AuctionProvider;
-import com.example.rodrigo.auction.repository.local.LocalLogin;
+import com.example.rodrigo.auction.repository.local.LocalLoginDAO;
 
 /**
  * A placeholder fragment containing a simple view.
@@ -56,7 +56,7 @@ public class MainActivityFragment extends Fragment implements LoaderManager.Load
     @Override
     public void onStop() {
         getContext().getContentResolver().unregisterContentObserver(bidBot);
-        auctionReactor.addRequest(new AuctionReactor.LastRequests());
+        auctionReactor.addRequest(new AuctionReactor.RequestToStop());
         auctionReactor.stop();
         super.onStop();
     }
@@ -118,6 +118,6 @@ public class MainActivityFragment extends Fragment implements LoaderManager.Load
 
     @Override
     public void onItemSelected(Long auctionId, Long value) {
-        auctionReactor.addRequest(new AuctionReactor.BidRequest(auctionId, LocalLogin.loginId(getContext()), value));
+        auctionReactor.addRequest(new AuctionReactor.BidRequest(auctionId, LocalLoginDAO.loginId(getContext()), value));
     }
 }

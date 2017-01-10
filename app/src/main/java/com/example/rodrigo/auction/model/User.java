@@ -4,9 +4,6 @@ import com.example.rodrigo.auction.repository.database.UserColumns;
 
 import org.chalup.microorm.annotations.Column;
 
-import java.util.ArrayList;
-import java.util.List;
-
 /**
  * Created by rodrigo on 1/6/17.
  */

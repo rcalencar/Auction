@@ -23,7 +23,7 @@ public class AuctionReactor {
     private Context context;
     private BidRequestConsumer processingConsumer;
     private LinkedBlockingQueue<Request> requests = new LinkedBlockingQueue<>();
-    private Thread runnigThread;
+    private Thread runningThread;
 
     private AuctionReactor(Context context) {
         this.context = context;
@@ -32,13 +32,13 @@ public class AuctionReactor {
     public static AuctionReactor build(Context context) {
         AuctionReactor instance = new AuctionReactor(context);
         instance.processingConsumer = new BidRequestConsumer(instance, instance.requests);
-        instance.runnigThread = new Thread(instance.processingConsumer);
-        instance.runnigThread.start();
+        instance.runningThread = new Thread(instance.processingConsumer);
+        instance.runningThread.start();
         return instance;
     }
 
     public Thread getRunningThread() {
-        return runnigThread;
+        return runningThread;
     }
 
     public void stop() {
@@ -58,47 +58,55 @@ public class AuctionReactor {
 
     private boolean process(Request request) {
         if (request instanceof BidBeats) {
-            Cursor cursor = AuctionDAO.selectLiveAuction(context);
-            try {
-                while (cursor.moveToNext()) {
-                    Auction auction = Orm.build().fromCursor(cursor, Auction.class);
-                    if (auction.finalizeIf()) {
-                        AuctionDAO.updateAuction(context, auction);
-                    }
-                }
-            } finally {
-                cursor.close();
-            }
-
-            return true;
+            return processBeat();
 
         } else {
-            BidRequest bidRequest = (BidRequest) request;
-            Log.d(LOG_TAG, "bidRequest " + bidRequest);
-            Auction auction = AuctionDAO.selectAuction(context, bidRequest.auctionId);
-            if (auction == null) {
-                Log.d(LOG_TAG, "bidRequest auction == null");
-                return false;
-            }
-
-            User user = UserDAO.selectUser(context, bidRequest.userId);
-            if (user == null) {
-                Log.d(LOG_TAG, "bidRequest user == null");
-                return false;
-            }
-
-            Bid bid = auction.createUserBid(user, bidRequest.value);
-            if (bid == null) {
-                Log.d(LOG_TAG, "bidRequest bid == null");
-                return false;
-            }
-            Log.d(LOG_TAG, "bidRequest bid " + bid);
-
-            BidDAO.insertBid(context, bid);
-            AuctionDAO.updateAuction(context, auction);
-
-            return true;
+            return processRequest((BidRequest) request);
         }
+    }
+
+    private boolean processRequest(BidRequest request) {
+        BidRequest bidRequest = request;
+        Log.d(LOG_TAG, "bidRequest " + bidRequest);
+        Auction auction = AuctionDAO.selectAuction(context, bidRequest.auctionId);
+        if (auction == null) {
+            Log.d(LOG_TAG, "bidRequest auction == null");
+            return false;
+        }
+
+        User user = UserDAO.selectUser(context, bidRequest.userId);
+        if (user == null) {
+            Log.d(LOG_TAG, "bidRequest user == null");
+            return false;
+        }
+
+        Bid bid = auction.createUserBid(user, bidRequest.value);
+        if (bid == null) {
+            Log.d(LOG_TAG, "bidRequest bid == null");
+            return false;
+        }
+        Log.d(LOG_TAG, "bidRequest bid " + bid);
+
+        BidDAO.insertBid(context, bid);
+        AuctionDAO.updateAuction(context, auction);
+
+        return true;
+    }
+
+    private boolean processBeat() {
+        Cursor cursor = AuctionDAO.selectLiveAuction(context);
+        try {
+            while (cursor.moveToNext()) {
+                Auction auction = Orm.build().fromCursor(cursor, Auction.class);
+                if (auction.finalizeIfExpired()) {
+                    AuctionDAO.updateAuction(context, auction);
+                }
+            }
+        } finally {
+            cursor.close();
+        }
+
+        return true;
     }
 
     public void start() {
@@ -137,7 +145,7 @@ public class AuctionReactor {
             while (isRunning) {
                 try {
                     Request bidRequest = queue.take();
-                    if (bidRequest instanceof LastRequests) {
+                    if (bidRequest instanceof RequestToStop) {
                         break;
                     }
                     auctionReactor.process(bidRequest);
@@ -163,6 +171,6 @@ public class AuctionReactor {
     private static class BidBeats implements Request {
     }
 
-    public static class LastRequests implements Request {
+    public static class RequestToStop implements Request {
     }
 }

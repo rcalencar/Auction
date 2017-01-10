@@ -5,7 +5,7 @@ import android.content.SharedPreferences;
 
 import com.example.rodrigo.auction.R;
 
-public class LocalLogin {
+public class LocalLoginDAO {
     private static final String LOGGED = "logged";
 
     public static void login(Context context, Long userId) {

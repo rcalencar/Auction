@@ -67,8 +67,8 @@ public class AuctionReactorUnitTest {
 
         AuctionReactor auctionReactor = AuctionReactor.build(context);
         long value = auction.nextBid();
-        auctionReactor.addRequest(new AuctionReactor.BidRequest(1l, 2l, value));
-        auctionReactor.addRequest(new AuctionReactor.LastRequests());
+        auctionReactor.addRequest(new AuctionReactor.BidRequest(auction.getId(), bidder.getId(), value));
+        auctionReactor.addRequest(new AuctionReactor.RequestToStop());
         auctionReactor.getRunningThread().join();
         assertEquals(value, auction.getWinnerBid().getValue());
     }

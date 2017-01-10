@@ -96,7 +96,7 @@ public class AuctionAdapter extends RecyclerView.Adapter<AuctionAdapter.ViewHold
         } else {
             holder.text_view_bidder.setText(context.getString(R.string.no_bid));
         }
-        DecimalFormat df = new DecimalFormat("#.00");
+        DecimalFormat df = new DecimalFormat("#,###.00");
         holder.bidValue = auction.nextBid();
         holder.text_view_current_value.setText(df.format(auction.currentValue() / 100.0));
         holder.button_bid.setText(String.format("%s %s", context.getString(R.string.string_bid), df.format(auction.nextBid() / 100.0)));
