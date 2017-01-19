@@ -41,16 +41,6 @@ public class AuctionReactorUnitTest {
     @Test
     public void reactor() throws Exception {
         PowerMockito.mockStatic(Log.class);
-        final Handler handler = mock(Handler.class);
-        when(handler.post(any(Runnable.class))).thenAnswer(new Answer() {
-            @Override
-            public Object answer(InvocationOnMock invocation) throws Throwable {
-                Runnable runnable = invocation.getArgumentAt(0, Runnable.class);
-                runnable.run();
-                return null;
-            }
-        });
-        whenNew(Handler.class).withNoArguments().thenReturn(handler);
         PowerMockito.mockStatic(AuctionDAO.class);
         PowerMockito.mockStatic(UserDAO.class);
         PowerMockito.mockStatic(BidDAO.class);
