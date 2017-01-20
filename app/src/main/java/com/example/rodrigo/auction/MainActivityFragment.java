@@ -56,7 +56,6 @@ public class MainActivityFragment extends Fragment implements LoaderManager.Load
     @Override
     public void onStop() {
         getContext().getContentResolver().unregisterContentObserver(bidBot);
-        auctionReactor.addRequest(new AuctionReactor.RequestToStop());
         auctionReactor.stop();
         super.onStop();
     }

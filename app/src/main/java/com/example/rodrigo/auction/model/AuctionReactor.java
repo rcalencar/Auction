@@ -3,6 +3,8 @@ package com.example.rodrigo.auction.model;
 import android.content.Context;
 import android.database.Cursor;
 import android.os.Handler;
+import android.os.HandlerThread;
+import android.os.Message;
 import android.util.Log;
 
 import com.example.rodrigo.auction.repository.database.Orm;
@@ -21,39 +23,40 @@ import java.util.concurrent.LinkedBlockingQueue;
 public class AuctionReactor {
     private static final String LOG_TAG = "Auction";
     private Context context;
-    private BidRequestConsumer processingConsumer;
-    private LinkedBlockingQueue<Request> requests = new LinkedBlockingQueue<>();
-    private Thread runningThread;
+    private HandlerThread runningThread = new HandlerThread("AuctionBidHandlerThread");
+    private Handler mHtHandler;
 
     private AuctionReactor(Context context) {
         this.context = context;
     }
 
     public static AuctionReactor build(Context context) {
-        AuctionReactor instance = new AuctionReactor(context);
-        instance.processingConsumer = new BidRequestConsumer(instance, instance.requests);
-        instance.runningThread = new Thread(instance.processingConsumer);
-        instance.runningThread.start();
-        return instance;
+        final AuctionReactor reactor = new AuctionReactor(context);
+        reactor.runningThread.start();
+        reactor.mHtHandler = new Handler(reactor.runningThread.getLooper()) {
+            @Override
+            public void handleMessage(Message msg) {
+                Request bidRequest = (Request) msg.obj;
+                reactor.process(bidRequest);
+            }
+        };
+
+
+        return reactor;
     }
 
-    public Thread getRunningThread() {
+    public HandlerThread getRunningThread() {
         return runningThread;
     }
 
     public void stop() {
-        processingConsumer.isRunning = false;
+        runningThread.quit();
     }
 
-    public boolean addRequest(Request bidRequest) {
-        try {
-            requests.put(bidRequest);
-            return true;
-
-        } catch (InterruptedException e) {
-            e.printStackTrace();
-            return false;
-        }
+    public void addRequest(Request bidRequest) {
+        Message message = new Message();
+        message.obj = bidRequest;
+        mHtHandler.sendMessage(message);
     }
 
     private boolean process(Request request) {
@@ -130,32 +133,6 @@ public class AuctionReactor {
     public interface Request {
     }
 
-    private static class BidRequestConsumer implements Runnable {
-        private final AuctionReactor auctionReactor;
-        private LinkedBlockingQueue<Request> queue;
-        private boolean isRunning = true;
-
-        BidRequestConsumer(AuctionReactor auctionReactor, LinkedBlockingQueue<Request> queue) {
-            this.auctionReactor = auctionReactor;
-            this.queue = queue;
-        }
-
-        @Override
-        public void run() {
-            while (isRunning) {
-                try {
-                    Request bidRequest = queue.take();
-                    if (bidRequest instanceof RequestToStop) {
-                        break;
-                    }
-                    auctionReactor.process(bidRequest);
-                } catch (InterruptedException e) {
-                    e.printStackTrace();
-                }
-            }
-        }
-    }
-
     public static class BidRequest implements Request {
         private Long auctionId;
         private Long userId;
@@ -169,8 +146,5 @@ public class AuctionReactor {
     }
 
     private static class BidBeats implements Request {
-    }
-
-    public static class RequestToStop implements Request {
     }
 }
