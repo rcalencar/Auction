@@ -1,4 +1,4 @@
-Attention! The project uses constraint-layout:1.0.0-beta4, be sure to use Android Studio 2.2+ and install constraint-layout at SDK Tools/ Support repository. I used AS 2.2.3.
+# Auction 
 
 The project has 2 predefined users, 1 bot user and 3 predefined auctions.
 User 1: rodrigo
