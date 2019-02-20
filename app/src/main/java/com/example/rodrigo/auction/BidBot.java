@@ -65,20 +65,7 @@ class BidBot extends ContentObserver {
             if (chance > USER_CHANCE) {
                 Log.d(LOG_TAG, "Bot is going to bid auction " + auction);
                 final Handler handler = new Handler();
-                Timer timer = new Timer();
-                TimerTask doAsynchronousTask = new TimerTask() {
-                    @Override
-                    public void run() {
-                        handler.post(new Runnable() {
-                            public void run() {
-                                auctionReactor.addRequest(new AuctionReactor.BidRequest(auction.getId(), user.getId(), auction.nextBid()));
-                            }
-                        });
-                    }
-                };
-                int delayToBid = 2 * 1000;
-                timer.schedule(doAsynchronousTask, delayToBid);
-
+                handler.postDelayed(() -> auctionReactor.addRequest(new AuctionReactor.BidRequest(auction.getId(), user.getId(), auction.nextBid())), 2_000);
             } else {
                 Log.d(LOG_TAG, "Bot is NOT going to bid.");
             }

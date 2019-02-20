@@ -18,9 +18,6 @@ import com.example.rodrigo.auction.model.AuctionReactor;
 import com.example.rodrigo.auction.repository.database.AuctionProvider;
 import com.example.rodrigo.auction.repository.local.LocalLoginDAO;
 
-/**
- * A placeholder fragment containing a simple view.
- */
 public class MainActivityFragment extends Fragment implements LoaderManager.LoaderCallbacks<Cursor>, AuctionAdapter.OnItemSelectedListener {
     private static final String LOG_TAG = "MainActivityFra";
     private static final String TAG_LIFECYCLE = LOG_TAG + " L_CYCLE";
@@ -75,7 +72,7 @@ public class MainActivityFragment extends Fragment implements LoaderManager.Load
 
         View rootView = inflater.inflate(R.layout.fragment_main, container, false);
 
-        mRecyclerView = (RecyclerView) rootView.findViewById(R.id.recycler_view_auctions);
+        mRecyclerView = rootView.findViewById(R.id.recycler_view_auctions);
         mLayoutManager = new LinearLayoutManager(getContext());
         mRecyclerView.setLayoutManager(mLayoutManager);
         mRecyclerView.setAdapter(mAdapter);

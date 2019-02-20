@@ -65,22 +65,21 @@ public class AuctionReactor {
         }
     }
 
-    private boolean processRequest(BidRequest request) {
-        BidRequest bidRequest = request;
-        Log.d(LOG_TAG, "bidRequest " + bidRequest);
-        Auction auction = AuctionDAO.selectAuction(context, bidRequest.auctionId);
+    private boolean processRequest(final BidRequest request) {
+        Log.d(LOG_TAG, "bidRequest " + request);
+        Auction auction = AuctionDAO.selectAuction(context, request.auctionId);
         if (auction == null) {
             Log.d(LOG_TAG, "bidRequest auction == null");
             return false;
         }
 
-        User user = UserDAO.selectUser(context, bidRequest.userId);
+        User user = UserDAO.selectUser(context, request.userId);
         if (user == null) {
             Log.d(LOG_TAG, "bidRequest user == null");
             return false;
         }
 
-        Bid bid = auction.createUserBid(user, bidRequest.value);
+        Bid bid = auction.createUserBid(user, request.value);
         if (bid == null) {
             Log.d(LOG_TAG, "bidRequest bid == null");
             return false;
@@ -115,15 +114,10 @@ public class AuctionReactor {
         TimerTask doAsynchronousTask = new TimerTask() {
             @Override
             public void run() {
-                handler.post(new Runnable() {
-                    @SuppressWarnings("unchecked")
-                    public void run() {
-                        addRequest(new AuctionReactor.BidBeats());
-                    }
-                });
+                handler.post(() -> addRequest(new BidBeats()));
             }
         };
-        int t = 5 * 1000;
+        int t = 5_000;
         timer.schedule(doAsynchronousTask, 0, t);
     }
 
