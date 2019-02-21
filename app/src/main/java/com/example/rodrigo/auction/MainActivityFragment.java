@@ -45,9 +45,6 @@ public class MainActivityFragment extends Fragment implements LoaderManager.Load
         auctionReactor = AuctionReactor.build(getContext());
 
         bidBot = new BidBot(getContext(), new Handler(), auctionReactor);
-        getContext().getContentResolver().registerContentObserver(AuctionProvider.Auctions.CONTENT_URI, true, bidBot);
-
-        auctionReactor.start();
     }
 
     @Override
@@ -55,12 +52,16 @@ public class MainActivityFragment extends Fragment implements LoaderManager.Load
         getContext().getContentResolver().unregisterContentObserver(bidBot);
         auctionReactor.addRequest(new AuctionReactor.RequestToStop());
         auctionReactor.stop();
+
         super.onStop();
     }
 
     @Override
     public void onResume() {
         getLoaderManager().restartLoader(LOADER_ID, null, MainActivityFragment.this);
+
+        getContext().getContentResolver().registerContentObserver(AuctionProvider.Auctions.CONTENT_URI, true, bidBot);
+        auctionReactor.start();
 
         super.onResume();
     }

@@ -32,8 +32,6 @@ public class AuctionReactor {
     public static AuctionReactor build(Context context) {
         AuctionReactor instance = new AuctionReactor(context);
         instance.processingConsumer = new BidRequestConsumer(instance, instance.requests);
-        instance.runningThread = new Thread(instance.processingConsumer);
-        instance.runningThread.start();
         return instance;
     }
 
@@ -109,6 +107,10 @@ public class AuctionReactor {
     }
 
     public void start() {
+        processingConsumer.isRunning = true;
+        runningThread = new Thread(processingConsumer);
+        runningThread.start();
+
         final Handler handler = new Handler();
         Timer timer = new Timer();
         TimerTask doAsynchronousTask = new TimerTask() {
